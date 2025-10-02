@@ -45,3 +45,16 @@ class ProductByCategoryViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(category__name__iexact=category)
         
         return queryset
+
+class DetailProductViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = AllProductSerializer
+    
+    def get_queryset(self):
+        queryset = Products.objects.all().select_related('category', 'image')
+        id = self.request.query_params.get('id')
+        
+        if id:
+            queryset = queryset.filter(product_id=id)
+        
+        return queryset
+        
