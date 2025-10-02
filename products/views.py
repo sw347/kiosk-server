@@ -18,7 +18,7 @@ class AllProductViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         raw_data = serializer.data
         
-        final_data = {}
+        final_list = []
         for category_data in raw_data:
             category_name = category_data['name'].lower()
             product_list = category_data['products']
@@ -27,9 +27,12 @@ class AllProductViewSet(viewsets.ReadOnlyModelViewSet):
                 product for product in product_list
             ]
             
-            final_data[category_name] = products_dict
-        
-        return Response(final_data)
+            final_list.append({
+                "name": category_name,
+                "data": products_dict
+            })
+            
+        return Response(final_list)
 
 class ProductByCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = AllProductSerializer
