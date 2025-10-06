@@ -12,7 +12,8 @@ class ProductSerializer(serializers.ModelSerializer):
         
     def get_filename(self, obj):
         return obj.image.filename
-    
+
+
 class AllProductSerializer(serializers.ModelSerializer):
     filename = serializers.SerializerMethodField()
     
@@ -22,10 +23,28 @@ class AllProductSerializer(serializers.ModelSerializer):
         
     def get_filename(self, obj):
         return obj.image.filename
-    
+
+   
 class CategoryProductSerializer(serializers.ModelSerializer):
     products = ProductSerializer(many=True, read_only=True)
     
     class Meta:
         model = Categories
         fields = ['name', 'products']
+        
+
+class IdleImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Images
+        fields = ['filename']
+
+
+class IdleProductSerializer(serializers.ModelSerializer):
+    filename = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Products
+        fields = ['name', 'filename', 'price']
+        
+    def get_filename(self, obj):
+        return obj.image.filename

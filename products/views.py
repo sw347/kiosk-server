@@ -1,8 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 from .models import Products, Categories
-from .idle_serializers import IdleProductSerializer
-from .all_serializers import AllProductSerializer, CategoryProductSerializer
+from .serializers import AllProductSerializer, CategoryProductSerializer, IdleProductSerializer
 
 class IdleProductViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Products.objects.filter(category_id__in=[1, 2])
