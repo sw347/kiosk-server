@@ -16,13 +16,17 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class AllProductSerializer(serializers.ModelSerializer):
     filename = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
     
     class Meta:
         model = Products
-        fields = ['name', 'filename', 'price', 'kcal']
+        fields = ['name', 'filename', 'price', 'kcal', 'description', 'available']
         
     def get_filename(self, obj):
         return obj.image.filename
+    
+    def get_description(self, obj):
+        return obj.image.description
 
    
 class CategoryProductSerializer(serializers.ModelSerializer):
