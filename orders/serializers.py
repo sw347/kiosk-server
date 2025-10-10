@@ -52,13 +52,16 @@ class OrderCreatSerializer(serializers.ModelSerializer):
             product = item_data['product_instance']
             quantity = item_data['quantity']
             
-            item_price = product.price * quantity
-            total_price += item_price
+            unit_price = product.price 
+            
+            item_total_price = unit_price * quantity
+            total_price += item_total_price
             
             order_product = OrderProduct(
                 order=order,
                 product=product,
-                price=item_price
+                price=unit_price,
+                quantity=quantity
             )
             
             order_products.append(order_product)

@@ -1,0 +1,121 @@
+{% extends "admin/base_site.html" %} 
+
+{% load i18n static %} 
+
+{% block extrastyle %}
+
+{{ block.super }}
+<style>
+  .dashboard-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  .module {
+    margin-bottom: 30px;
+    padding: 15px;
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="dashboard-container">
+  <div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+    &rsaquo; {% translate 'Order Dashboard' %}
+  </div>
+
+  <h1>{% translate "Order Analysis Dashboard" %}</h1>
+
+  <div class="module">
+    <h2>{% translate "Order Status Summary" %}</h2>
+    <ul style="list-style-type: disc; margin-left: 20px">
+      {% for status in status_summary %}
+      <li style="font-size: 1.1em; padding: 5px 0">
+        <strong>{{ status.order_status__description }}</strong>: {{ status.count }} items
+      </li>
+      {% empty %}
+      <p>No orders have been recorded.</p>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="module">
+    <h2>{% translate "Top 5 Products by Quantity" %}</h2>
+    <ol style="margin-left: 20px">
+      {% for product in top_products %}
+      <li style="padding: 5px 0">
+        {{ product.product__name }} (Total {{ product.total_quantity }}items sold)
+      </li>
+      {% empty %}
+      <p>No products have been sold.</p>
+      {% endfor %}
+    </ol>
+  </div>
+
+  <div class="module">
+    <h2>{% translate "Last 7 Days Sales Trend" %}</h2>
+    <canvas id="dailySalesChart"></canvas>
+  </div>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const rawData = "{{ daily_sales_data|safe }}";
+
+    if (rawData && rawData !== "[]") {
+      try {
+        const data = JSON.parse(rawData);
+
+        const dates = data.map((item) => item.day);
+        const sales = data.map((item) => parseFloat(item.total_price || 0));
+
+        const ctx = document.getElementById("dailySalesChart").getContext("2d");
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: dates,
+            datasets: [
+              {
+                label: "Daily Sales (€)",
+                data: sales,
+                borderColor: "rgb(75, 192, 192)",
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                tension: 0.3,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: "Revenue (€)",
+                },
+              },
+            },
+          },
+        });
+      } catch (e) {
+        console.error("Failed to parse daily sales data:", e);
+      }
+    } else {
+      document.getElementById("dailySalesChart").parentNode.innerHTML =
+        "<p>No daily sales data is available.</p>";
+    }
+  });
+</script>
+{% endblock %}

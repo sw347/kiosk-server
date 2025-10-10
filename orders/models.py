@@ -72,6 +72,7 @@ class OrderProduct(models.Model):
     order = models.ForeignKey(Orders, on_delete=models.CASCADE, db_column='order_id')
     product = models.ForeignKey(Products, on_delete=models.PROTECT, db_column='product_id')
     price = models.DecimalField(max_digits=6, decimal_places=2)
+    quantity = models.IntegerField(default=1)
     
     class Meta:
         db_table = 'order_product'

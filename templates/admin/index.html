@@ -1,0 +1,18 @@
+{% extends "admin/index.html" %}
+{% load i18n static %}
+
+{% block content %}
+    <div class="module">
+        <h2>{% translate "Order Analysis Dashboard" %}</h2>
+        <div class="module-body">
+            <p style="font-size: 1.1em; padding: 10px 0;">
+                <a href="{% url 'admin:order_dashboard' %}" 
+                   style="color: #417690; font-weight: bold;">
+                    📈 Go to Order Dashboard
+                </a>
+            </p>
+            <p>{% translate "View key metrics such as order status, sales trends, and top-selling products." %}</p>
+        </div>
+    </div>
+    {{ block.super }}
+{% endblock %}
