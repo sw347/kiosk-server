@@ -1,0 +1,96 @@
+{% extends "admin/base_site.html" %} 
+{% load i18n static %} 
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  .dashboard-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  .module {
+    margin-bottom: 30px;
+    padding: 15px;
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="dashboard-container">
+    <div class="breadcrumbs">
+        <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+        &rsaquo; {% translate 'Order Status Manager' %}
+    </div>
+
+    <h1>{% translate "Order Status Manager" %}</h1>
+    
+    <div class="module"> 
+        <h2>Orders Awaiting Processing ({{ orders_to_process|length }} items)</h2>
+        
+        <form action="" method="post">
+            {% csrf_token %}
+            
+            <table class="order-table" id="result_list">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Pickup Number</th>
+                        <th>Total Price</th>
+                        <th>Order Time</th>
+                        <th>Current Status</th>
+                        <th>Change Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders_to_process %}
+                    <tr class="{% cycle 'row1' 'row2' %}">
+                        <td>#{{ order.order_id }}</td>
+                        <td><strong>{{ order.pickup_number }}</strong></td>
+                        <td>{{ order.price }}</td>
+                        <td>{{ order.datetime|date:"H:i:s" }}</td>
+                        <td>{{ order.order_status.description }}</td>
+                        
+                        <td>
+                            <select name="status_{{ order.order_id }}">
+                                {% for status in all_statuses %}
+                                <option value="{{ status.pk }}" {% if status.pk == order.order_status.pk %}selected{% endif %}>
+                                    {{ status.description }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    
+                    <tr class="{% cycle 'row1' 'row2' %} product-row">
+                        <td colspan="6" style="padding-top: 5px; padding-bottom: 15px;">
+                            <strong style="display: block; margin-bottom: 5px;">Items:</strong>
+                            <ul style="list-style: none; padding-left: 10px; margin: 0; font-size: 0.95em;">
+                                {% for item in order.orderproduct_set.all %}
+                                    <li style="margin-bottom: 2px;">
+                                        {{ item.product.name }} &times; {{ item.quantity }} ({{ item.price }} each)
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="6">No orders awaiting processing.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {% if orders_to_process %}
+            <p class="submit-row">
+                <input type="submit" value="Bulk Update Status" name="_update_status">
+            </p>
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endblock %}

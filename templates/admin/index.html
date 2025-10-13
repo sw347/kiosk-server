@@ -3,16 +3,26 @@
 
 {% block content %}
     <div class="module">
-        <h2>{% translate "Order Analysis Dashboard" %}</h2>
+        <h2>{% translate "Order Analysis & Management" %}</h2>
         <div class="module-body">
+            
             <p style="font-size: 1.1em; padding: 10px 0;">
                 <a href="{% url 'admin:order_dashboard' %}" 
-                   style="color: #417690; font-weight: bold;">
-                    📈 Go to Order Dashboard
+                    style="color: #417690; font-weight: bold;">
+                    📈 Go to Order Analysis Dashboard
                 </a>
             </p>
-            <p>{% translate "View key metrics such as order status, sales trends, and top-selling products." %}</p>
+            
+            <p style="font-size: 1.1em; padding: 10px 0;">
+                <a href="{% url 'admin:orders_status_manager' %}" 
+                    style="color: #d9534f; font-weight: bold;">
+                    📦 Go to Order Status Manager
+                </a>
+            </p>
+            
+            <p>{% translate "View key metrics such as order status, sales trends, and top-selling products. Use the Status Manager to process pending orders." %}</p>
         </div>
     </div>
+    
     {{ block.super }}
 {% endblock %}

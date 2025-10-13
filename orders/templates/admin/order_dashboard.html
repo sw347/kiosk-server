@@ -61,6 +61,7 @@
   <div class="module">
     <h2>{% translate "Last 7 Days Sales Trend" %}</h2>
     <canvas id="dailySalesChart"></canvas>
+    {{ daily_sales_data|json_script:"daily-sales-data" }}
   </div>
 </div>
 {% endblock %}
@@ -71,51 +72,66 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const rawData = "{{ daily_sales_data|safe }}";
+    const scriptElement = document.getElementById("daily-sales-data");
+    
+    if (scriptElement && scriptElement.textContent.trim()) {
+        try {
+            const data = JSON.parse(scriptElement.textContent); 
 
-    if (rawData && rawData !== "[]") {
-      try {
-        const data = JSON.parse(rawData);
-
-        const dates = data.map((item) => item.day);
-        const sales = data.map((item) => parseFloat(item.total_price || 0));
-
-        const ctx = document.getElementById("dailySalesChart").getContext("2d");
-        new Chart(ctx, {
-          type: "line",
-          data: {
-            labels: dates,
-            datasets: [
-              {
-                label: "Daily Sales (€)",
-                data: sales,
-                borderColor: "rgb(75, 192, 192)",
-                backgroundColor: "rgba(75, 192, 192, 0.2)",
-                tension: 0.3,
-                fill: true,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            scales: {
-              y: {
-                beginAtZero: true,
-                title: {
-                  display: true,
-                  text: "Revenue (€)",
+            const dates = data.map((item) => item.day);
+            const sales = data.map((item) => parseFloat(item.total_price || 0));
+            
+            const ctx = document.getElementById("dailySalesChart").getContext("2d");
+            new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: dates, 
+                    datasets: [
+                        {
+                            label: "Daily Sales (€)",
+                            data: sales, 
+                            borderColor: "rgb(75, 192, 192)",
+                            backgroundColor: "rgba(75, 192, 192, 0.2)",
+                            tension: 0.3, 
+                            fill: true,
+                        },
+                    ],
                 },
-              },
-            },
-          },
-        });
-      } catch (e) {
-        console.error("Failed to parse daily sales data:", e);
-      }
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true
+                        },
+                        title: {
+                            display: true,
+                            text: 'Last 7 Days Sales Trend'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: "Date",
+                            },
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: "Revenue (€)",
+                            },
+                        },
+                    },
+                },
+            });
+        } catch (e) {
+            console.error("Failed to parse daily sales data:", e);
+        }
     } else {
-      document.getElementById("dailySalesChart").parentNode.innerHTML =
-        "<p>No daily sales data is available.</p>";
+        document.getElementById("dailySalesChart").parentNode.innerHTML =
+            "<p>No daily sales data is available for the last 7 days.</p>";
     }
-  });
+});
 </script>
 {% endblock %}

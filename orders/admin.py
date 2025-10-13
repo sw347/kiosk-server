@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import Order, OrderProduct, OrderStatus
 from django.urls import path
-from .views import order_dashboard
+from .views import order_dashboard, order_status_management
 
 class OrderProductInline(admin.TabularInline):
     model = OrderProduct
@@ -18,6 +18,10 @@ class OrdersAdmin(admin.ModelAdmin):
         'price', 
         'datetime', 
         'display_total_items'
+    )
+    
+    list_editable = (
+        'order_status',
     )
     
     fields = (
@@ -41,9 +45,10 @@ class OrdersAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
-            path('orders/dashboard/', admin.site.admin_view(order_dashboard), name='order_dashboard'),
+            path('dashboard/', admin.site.admin_view(order_dashboard), name='order_dashboard'),
+            path('status-manager/', self.admin_site.admin_view(order_status_management), name='orders_status_manager'),
         ]
         return custom_urls + urls
-
+    
 admin.site.register(OrderStatus)
 admin.site.register(OrderProduct)
