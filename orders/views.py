@@ -18,18 +18,12 @@ class OrderViewSet(viewsets.ModelViewSet):
 
 def order_dashboard(request):
     today = timezone.localtime().date()
+    seven_days_ago = today - timezone.timedelta(days=7)
     
     status_summary = Order.objects.values('order_status__description').annotate(
         count=Count('order_status')
     )
 
-    seven_days_ago = today - timezone.timedelta(days=7)
-    daily_sales = Order.objects.filter(
-        datetime__date__gte=seven_days_ago
-    ).extra(select={'day': 'date(datetime)'}).values('day').annotate(
-        total_price=Sum('price')
-    ).order_by('day')
-    
     top_products = OrderProduct.objects.values('product__name').annotate(
         total_quantity=Sum('quantity')
     ).order_by('-total_quantity')[:5]
@@ -44,7 +38,6 @@ def order_dashboard(request):
         'status_summary': list(status_summary),
         'daily_sales_data': list(daily_sales),
         'top_products': list(top_products),
-        'daily_sales_data': list(daily_sales), 
     }
     return render(request, 'admin/order_dashboard.html', context)
 

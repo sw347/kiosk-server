@@ -19,7 +19,7 @@ class Order(models.Model):
     order_status = models.ForeignKey(OrderStatus, on_delete=models.PROTECT, db_column='order_status_id', default=1)
     pickup_number = models.IntegerField()
     price = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    datetime = models.DateTimeField(auto_now_add=True)
+    datetime = models.DateTimeField(auto_now_add=False, default=timezone.now)
     
     class Meta:
         db_table = 'order'
