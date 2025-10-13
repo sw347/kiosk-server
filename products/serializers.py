@@ -1,13 +1,13 @@
 from rest_framework import serializers
-from .models import Products
-from core.models import Images, Categories
+from .models import Product
+from core.models import Image, Categorie
 from core.serializers import CategorySerializer, ImageSerializer
 
 class ProductSerializer(serializers.ModelSerializer):
     filename = serializers.SerializerMethodField()  
 
     class Meta:
-        model = Products
+        model = Product
         fields = ['product_id', 'name', 'filename', 'price', 'kcal', 'available'] 
         
     def get_filename(self, obj):
@@ -19,7 +19,7 @@ class AllProductSerializer(serializers.ModelSerializer):
     description = serializers.SerializerMethodField()
     
     class Meta:
-        model = Products
+        model = Product
         fields = ['name', 'filename', 'price', 'kcal', 'description', 'available']
         
     def get_filename(self, obj):
@@ -33,13 +33,13 @@ class CategoryProductSerializer(serializers.ModelSerializer):
     products = ProductSerializer(many=True, read_only=True)
     
     class Meta:
-        model = Categories
+        model = Categorie
         fields = ['name', 'products']
         
 
 class IdleImageSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Images
+        model = Image
         fields = ['filename']
 
 
@@ -47,7 +47,7 @@ class IdleProductSerializer(serializers.ModelSerializer):
     filename = serializers.SerializerMethodField()
     
     class Meta:
-        model = Products
+        model = Product
         fields = ['name', 'filename', 'price']
         
     def get_filename(self, obj):

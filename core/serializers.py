@@ -1,16 +1,16 @@
 from rest_framework import serializers
-from .models import Categories, Images
+from .models import Categorie, Image
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Categories
+        model = Categorie
         fields = ['category_id', 'name', 'description']
 
 class ImageSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField()
 
     class Meta:
-        model = Images
+        model = Image
         fields = ['image_id', 'filename', 'description', 'url']
 
     def get_url(self, obj):

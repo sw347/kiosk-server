@@ -1,7 +1,7 @@
 from django.db import models, transaction
 from django.db.models import F
 from django.utils import timezone
-from products.models import Products
+from products.models import Product
 
 class OrderStatus(models.Model):
     order_status_id = models.AutoField(primary_key=True)
@@ -14,7 +14,7 @@ class OrderStatus(models.Model):
     def __str__(self):
         return self.description
 
-class Orders(models.Model):
+class Order(models.Model):
     order_id = models.AutoField(primary_key=True)
     order_status = models.ForeignKey(OrderStatus, on_delete=models.PROTECT, db_column='order_status_id', default=1)
     pickup_number = models.IntegerField()
@@ -22,7 +22,7 @@ class Orders(models.Model):
     datetime = models.DateTimeField(auto_now_add=True)
     
     class Meta:
-        db_table = 'orders'
+        db_table = 'order'
         ordering = ['-datetime']
         
     def __str__(self):
@@ -69,8 +69,8 @@ class PickupSequence(models.Model):
         return obj
 
 class OrderProduct(models.Model):
-    order = models.ForeignKey(Orders, on_delete=models.CASCADE, db_column='order_id')
-    product = models.ForeignKey(Products, on_delete=models.PROTECT, db_column='product_id')
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, db_column='order_id')
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, db_column='product_id')
     price = models.DecimalField(max_digits=6, decimal_places=2)
     quantity = models.IntegerField(default=1)
     

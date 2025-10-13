@@ -1,18 +1,18 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
-from .models import Products, Categories
+from .models import Product, Categorie
 from .serializers import AllProductSerializer, CategoryProductSerializer, IdleProductSerializer
 # from django.utils.decorators import method_decorator
 # from django.views.decorators.cache import cache_page
 
 # @method_decorator(cache_page(60 * 5), name='list')
 class IdleProductViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Products.objects.filter(category_id__in=[1, 2])
+    queryset = Product.objects.filter(category_id__in=[1, 2])
     serializer_class = IdleProductSerializer
 
 # @method_decorator(cache_page(60 * 5), name='list')
 class AllProductViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Categories.objects.all()
+    queryset = Categorie.objects.all()
     serializer_class = CategoryProductSerializer
     
     def list(self, request, *args, **kwargs):
@@ -42,7 +42,7 @@ class ProductByCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = AllProductSerializer
 
     def get_queryset(self):
-        queryset = Products.objects.all().select_related('category', 'image')
+        queryset = Product.objects.all().select_related('category', 'image')
         category = self.request.query_params.get('category')
         
         if category:
@@ -55,7 +55,7 @@ class DetailProductViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = AllProductSerializer
     
     def get_queryset(self):
-        queryset = Products.objects.all().select_related('category', 'image')
+        queryset = Product.objects.all().select_related('category', 'image')
         id = self.request.query_params.get('id')
         
         if id:

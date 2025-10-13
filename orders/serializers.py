@@ -1,12 +1,12 @@
 from rest_framework import serializers
 from django.db import transaction
 from django.db.models import Sum
-from .models import Orders, OrderProduct, OrderStatus
-from products.models import Products
+from .models import Order, OrderProduct, OrderStatus
+from products.models import Product
 
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Orders
+        model = Order
         fields = '__all__'
 
 class OrderProductCreateSerializer(serializers.ModelSerializer):
@@ -23,7 +23,7 @@ class OrderProductCreateSerializer(serializers.ModelSerializer):
         product_id = validated_data.get('product_id')
         
         try:
-            product = Products.objects.get(pk=product_id)
+            product = Product.objects.get(pk=product_id)
         except Products.DoesNotExist:
             raise serializers.ValidationError("Product with ID {value} does not exist.")
         
@@ -35,7 +35,7 @@ class OrderCreatSerializer(serializers.ModelSerializer):
     items = OrderProductCreateSerializer(many=True, write_only=True)
     
     class Meta:
-        model = Orders
+        model = Order
         fields = ['order_status', "items", "order_id", "pickup_number", "price", "datetime"]
         read_only_fields = ['order_id', 'pickup_number', 'price', 'datetime']
         

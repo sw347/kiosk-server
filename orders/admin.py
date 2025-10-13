@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Orders, OrderProduct, OrderStatus
+from .models import Order, OrderProduct, OrderStatus
 from django.urls import path
 from .views import order_dashboard
 
@@ -9,7 +9,7 @@ class OrderProductInline(admin.TabularInline):
     fields = ('product', 'quantity', 'price') 
     readonly_fields = ('price',)
 
-@admin.register(Orders)
+@admin.register(Order)
 class OrdersAdmin(admin.ModelAdmin):
     list_display = (
         'order_id', 
@@ -20,6 +20,15 @@ class OrdersAdmin(admin.ModelAdmin):
         'display_total_items'
     )
     
+    fields = (
+        'order_id',
+        'pickup_number',
+        'price',
+        'order_status',
+    )
+    
+    readonly_fields = ('order_id', 'pickup_number', 'price', 'datetime')
+    
     search_fields = ('order_id', 'pickup_number')
     list_filter = ('order_status', 'datetime')
     inlines = [OrderProductInline]
@@ -27,7 +36,7 @@ class OrdersAdmin(admin.ModelAdmin):
     def display_total_items(self, obj):
         return obj.orderproduct_set.aggregate(total=models.Sum('quantity'))['total'] or 0
     
-    display_total_items.short_description = '총 상품 수'
+    display_total_items.short_description = 'Total Items'
 
     def get_urls(self):
         urls = super().get_urls()
