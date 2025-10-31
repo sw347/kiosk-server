@@ -57,7 +57,7 @@ class Order(models.Model):
 
 class PickupSequence(models.Model):
     current_number = models.IntegerField(default=0)
-    last_assigned_date = models.DateField(default=timezone.now)
+    last_assigned_date = models.DateField(default=date.today)
     
     def save(self, *args, **kwargs):
         self.pk = 1

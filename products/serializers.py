@@ -20,7 +20,7 @@ class AllProductSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Product
-        fields = ['name', 'filename', 'price', 'kcal', 'description', 'available']
+        fields = ['product_id', 'name', 'filename', 'price', 'kcal', 'description', 'available']
         
     def get_filename(self, obj):
         return obj.image.filename

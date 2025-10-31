@@ -2,15 +2,15 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from .models import Product, Categorie
 from .serializers import AllProductSerializer, CategoryProductSerializer, IdleProductSerializer
-# from django.utils.decorators import method_decorator
-# from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
-# @method_decorator(cache_page(60 * 5), name='list')
+@method_decorator(cache_page(60 * 5), name='list')
 class IdleProductViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Product.objects.filter(category_id__in=[1, 2])
     serializer_class = IdleProductSerializer
 
-# @method_decorator(cache_page(60 * 5), name='list')
+@method_decorator(cache_page(60 * 5), name='list')
 class AllProductViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Categorie.objects.all()
     serializer_class = CategoryProductSerializer
@@ -23,7 +23,7 @@ class AllProductViewSet(viewsets.ReadOnlyModelViewSet):
         
         final_list = []
         for category_data in raw_data:
-            category_name = category_data['name'].lower()
+            category_name = category_data['name']
             product_list = category_data['products']
             
             products_dict = [
@@ -37,7 +37,7 @@ class AllProductViewSet(viewsets.ReadOnlyModelViewSet):
             
         return Response(final_list)
 
-# @method_decorator(cache_page(60 * 5), name='list')
+@method_decorator(cache_page(60 * 5), name='list')
 class ProductByCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = AllProductSerializer
 
@@ -50,7 +50,7 @@ class ProductByCategoryViewSet(viewsets.ReadOnlyModelViewSet):
         
         return queryset
 
-# @method_decorator(cache_page(60 * 5), name='list')
+@method_decorator(cache_page(60 * 5), name='list')
 class DetailProductViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = AllProductSerializer
     
